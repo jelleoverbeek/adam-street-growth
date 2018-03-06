@@ -1,0 +1,25 @@
+@import "variables";
+@import "mixins";
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Source Sans Pro', sans-serif;
+    display: flex;
+}
+
+aside {
+    width: 20vh;
+    min-width: rem(320);
+    height: 100vh;
+    background-color: #fff;
+    padding: rem(24);
+}
+
+main {
+    width: 100%;
+    background-color: antiquewhite;
+}

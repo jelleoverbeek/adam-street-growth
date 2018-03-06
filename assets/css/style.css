@@ -1,0 +1,18 @@
+* {
+  box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Source Sans Pro', sans-serif;
+  display: flex; }
+
+aside {
+  width: 20vh;
+  min-width: 20rem;
+  height: 100vh;
+  background-color: #fff;
+  padding: 1.5rem; }
+
+main {
+  width: 100%;
+  background-color: antiquewhite; }

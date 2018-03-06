@@ -14,17 +14,17 @@ const api = {
           ?geo geo:asWKT ?wkt .
         }
         
-        ORDER BY ?date
+        ORDER BY DESC(?date)
         LIMIT 100`,
     queryUrl: function () {
         return 'https://api.data.adamlink.nl/datasets/AdamNet/all/services/endpoint/sparql?default-graph-uri=&query=' + encodeURIComponent(this.sparqlQuery) + '&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on'
     },
-    setData: function (dataObj) {
+    setData: function () {
         fetch(this.queryUrl())
             // transform the data into json
             .then((resp) => resp.json())
             .then(function(data) {
-                dataObj = data.results.bindings;
+                content.streets = data.results.bindings;
                 content.render();
             })
             .catch(function(error) {
@@ -36,14 +36,31 @@ const api = {
 
 const content = {
     streets: [],
+    createTemplate: function (year, streetName) {
+        return `<div class="timeline">
+                    <div class="timeline-part">
+                        <div class="timeline-graph"></div>
+                        <div class="timeline-meta">
+                            <h3>${year}</h3>
+                            <p>${streetName}</p>
+                        </div>
+                    </div>
+                </div>`
+    },
+    renderStreets: function () {
+        this.streets.forEach((item) => {
+            let html = this.createTemplate(item.date.value, item.label.value);
+            document.querySelector(".streets").insertAdjacentHTML('beforeend', html);
+        });
+    },
     render: function () {
-        console.log('render');
+        this.renderStreets();
     }
 };
 
 const app = {
     init: function () {
-        api.setData(content.streets);
+        api.setData();
     }
 };
 
