@@ -28,7 +28,7 @@ const api = {
         }
         
         ORDER BY ?date
-        `,
+        LIMIT 100`,
     queryUrl: function () {
         return 'https://api.data.adamlink.nl/datasets/AdamNet/all/services/endpoint/sparql?default-graph-uri=&query=' + encodeURIComponent(this.sparqlQuery) + '&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on'
     },
@@ -56,7 +56,7 @@ const content = {
                     <div class="timeline-part">
                         <div class="timeline-graph"></div>
                         <div class="timeline-meta">
-                            <h3>${year}</h3>
+                            <h3 class="year">${year}</h3>
                             <p>${streetName}</p>
                         </div>
                     </div>
@@ -65,13 +65,18 @@ const content = {
     renderStreets: function () {
 
         this.streets.forEach((item) => {
-            map.lines.push(Terraformer.WKT.parse(item.wkt.value));
+
+            map.lines.push({
+                geoJSON: Terraformer.WKT.parse(item.wkt.value),
+                year: item.date.value
+            });
+
             let html = this.createTemplate(item.date.value, item.label.value);
             document.querySelector(".streets").insertAdjacentHTML('beforeend', html);
         });
 
         map.filterLines();
-        map.addLines();
+        // map.addLines();
     },
     render: function () {
         this.renderStreets();
@@ -86,19 +91,30 @@ const map = {
         "weight": 3,
     },
     lines: [],
+    filteredLines: [],
+    geoJSONlayer: null,
     filterLines: function () {
         this.lines = this.lines.filter(function (item) {
-            if (item.type !== "Point") {
+            if (item.geoJSON.type !== "Point") {
                 return item
             }
         });
     },
     addLines: function () {
         this.lines.forEach((item) => {
-            L.geoJSON(item).addTo(this.canvas);
+            this.geoJSONlayer = L.geoJSON(item.geoJSON).addTo(this.canvas);
         });
 
         this.setLineStyle();
+    },
+    filterLinesByYear: function (year) {
+        let lines = this.lines.filter(function (item) {
+            if (item.year !== year) {
+                return item
+            }
+        });
+
+        console.log(lines);
     },
     setLineStyle: function () {
         L.geoJSON(this.lines, {
@@ -113,19 +129,48 @@ const map = {
 
         let Stamen_TonerLite = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}', {
             attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-            subdomains: 'abcd',
             minZoom: 0,
             maxZoom: 20,
             ext: 'png'
         }).addTo(this.canvas);
     }
-}
+};
 
+const filter = {
+    sidebar: document.querySelector("aside"),
+    // https://gomakethings.com/detecting-when-a-visitor-has-stopped-scrolling-with-vanilla-javascript/
+    checkVisbileYear: function () {
+        let visibleParts = [];
+
+        this.sidebar.querySelectorAll(".timeline-part").forEach((element) => {
+            if(element.offsetTop <= this.sidebar.scrollTop + window.innerHeight) {
+                visibleParts.push(element);
+            }
+        });
+
+        return visibleParts[visibleParts.length-1].querySelector(".year").innerText;
+    },
+    init: function () {
+        const _this = this;
+        let isScrolling = false;
+
+        this.sidebar.addEventListener('scroll', function(event) {
+            // Clear our timeout throughout the scroll
+            window.clearTimeout( isScrolling );
+
+            // Set a timeout to run after scrolling ends
+            isScrolling = setTimeout(function() {
+                map.filterLinesByYear(_this.checkVisbileYear());
+            }, 66);
+        });
+    }
+};
 
 const app = {
     init: function () {
         api.setData();
         map.init();
+        filter.init();
     }
 };
 
