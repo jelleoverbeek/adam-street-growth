@@ -1,3 +1,6 @@
+// ORDER BY DESC(?date)
+// ORDER BY ?date
+
 const api = {
     sparqlQuery: `
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -14,8 +17,8 @@ const api = {
           ?geo geo:asWKT ?wkt .
         }
         
-        ORDER BY DESC(?date)
-        LIMIT 100`,
+        ORDER BY ?date
+        LIMIT 250`,
     queryUrl: function () {
         return 'https://api.data.adamlink.nl/datasets/AdamNet/all/services/endpoint/sparql?default-graph-uri=&query=' + encodeURIComponent(this.sparqlQuery) + '&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on'
     },
@@ -48,31 +51,60 @@ const content = {
                 </div>`
     },
     renderStreets: function () {
+
         this.streets.forEach((item) => {
+            map.lines.push(Terraformer.WKT.parse(item.wkt.value));
             let html = this.createTemplate(item.date.value, item.label.value);
             document.querySelector(".streets").insertAdjacentHTML('beforeend', html);
         });
+
+        map.addLines();
     },
     render: function () {
         this.renderStreets();
     }
 };
 
-const map = L.map('map', {
-    center: [51.505, -0.09],
-    zoom: 13
-});
+const map = {
+    canvas: "",
+    lineStyle: {
+        "color": "#FF4343",
+        "weight": 4,
+    },
+    lines: [],
+    addLines: function () {
+        this.lines.forEach((item) => {
+            L.geoJSON(item).addTo(this.canvas);
+        });
 
-L.tileLayer('http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png?access_token={accessToken}', {
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-    maxZoom: 18,
-    id: 'mapbox.streets',
-    accessToken: config.mapbox_key
-}).addTo(map);
+        this.setLineStyle();
+    },
+    setLineStyle: function () {
+        L.geoJSON(this.lines, {
+            style: this.lineStyle
+        }).addTo(this.canvas);
+    },
+    init: function () {
+        this.canvas = L.map('map', {
+            center: [52.35, 4.91],
+            zoom: 12
+        });
+
+        let Stamen_TonerLite = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}', {
+            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            subdomains: 'abcd',
+            minZoom: 0,
+            maxZoom: 20,
+            ext: 'png'
+        }).addTo(this.canvas);
+    }
+}
+
 
 const app = {
     init: function () {
         api.setData();
+        map.init();
     }
 };
 
