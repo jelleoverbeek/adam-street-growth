@@ -7,9 +7,9 @@ body {
   display: flex; }
 
 aside {
-  width: 20vh;
+  width: 20vw;
   min-width: 20rem;
-  height: 100vh;
+  height: 100vw;
   background-color: #fff;
   padding: 1.5rem;
   overflow: auto; }
@@ -17,3 +17,20 @@ aside {
 main {
   width: 100%;
   background-color: antiquewhite; }
+
+.preloader {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1000; }
+
+.hidden {
+  display: none; }

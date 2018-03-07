@@ -2,6 +2,16 @@
 // ORDER BY ?date
 
 const api = {
+    loading: true,
+    checkLoading: function () {
+        const preloader = document.querySelector(".preloader");
+
+        if(!this.loading) {
+            preloader.classList.add("hidden");
+        } else {
+            preloader.classList.remove("hidden");
+        }
+    },
     sparqlQuery: `
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -18,7 +28,7 @@ const api = {
         }
         
         ORDER BY ?date
-        LIMIT 250`,
+        `,
     queryUrl: function () {
         return 'https://api.data.adamlink.nl/datasets/AdamNet/all/services/endpoint/sparql?default-graph-uri=&query=' + encodeURIComponent(this.sparqlQuery) + '&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on'
     },
@@ -26,9 +36,11 @@ const api = {
         fetch(this.queryUrl())
             // transform the data into json
             .then((resp) => resp.json())
-            .then(function(data) {
+            .then((data) => {
                 content.streets = data.results.bindings;
                 content.render();
+                this.loading = false;
+                this.checkLoading();
             })
             .catch(function(error) {
                 // if there is any error you will catch them here
