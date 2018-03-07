@@ -70,6 +70,7 @@ const content = {
             document.querySelector(".streets").insertAdjacentHTML('beforeend', html);
         });
 
+        map.filterLines();
         map.addLines();
     },
     render: function () {
@@ -80,10 +81,18 @@ const content = {
 const map = {
     canvas: "",
     lineStyle: {
+        "fillColor": "#FF4343",
         "color": "#FF4343",
-        "weight": 4,
+        "weight": 3,
     },
     lines: [],
+    filterLines: function () {
+        this.lines = this.lines.filter(function (item) {
+            if (item.type !== "Point") {
+                return item
+            }
+        });
+    },
     addLines: function () {
         this.lines.forEach((item) => {
             L.geoJSON(item).addTo(this.canvas);
@@ -98,7 +107,7 @@ const map = {
     },
     init: function () {
         this.canvas = L.map('map', {
-            center: [52.35, 4.91],
+            center: [52.29, 4.91],
             zoom: 12
         });
 
