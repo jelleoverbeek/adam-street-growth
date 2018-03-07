@@ -28,7 +28,7 @@ const api = {
         }
         
         ORDER BY ?date
-        LIMIT 100`,
+        LIMIT 500`,
     queryUrl: function () {
         return 'https://api.data.adamlink.nl/datasets/AdamNet/all/services/endpoint/sparql?default-graph-uri=&query=' + encodeURIComponent(this.sparqlQuery) + '&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on'
     },
@@ -101,23 +101,24 @@ const map = {
         });
     },
     addLines: function () {
-        this.lines.forEach((item) => {
+
+        this.filteredLines.forEach((item) => {
             this.geoJSONlayer = L.geoJSON(item.geoJSON).addTo(this.canvas);
         });
 
         this.setLineStyle();
     },
     filterLinesByYear: function (year) {
-        let lines = this.lines.filter(function (item) {
-            if (item.year !== year) {
+        this.filteredLines = this.lines.filter(function (item) {
+            if (item.year < year) {
                 return item
             }
         });
 
-        console.log(lines);
+        console.log(this.filteredLines)
     },
     setLineStyle: function () {
-        L.geoJSON(this.lines, {
+        L.geoJSON(this.filteredLines, {
             style: this.lineStyle
         }).addTo(this.canvas);
     },
@@ -160,7 +161,10 @@ const filter = {
 
             // Set a timeout to run after scrolling ends
             isScrolling = setTimeout(function() {
+
                 map.filterLinesByYear(_this.checkVisbileYear());
+                map.addLines();
+
             }, 66);
         });
     }
