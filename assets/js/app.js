@@ -52,13 +52,11 @@ const api = {
 const content = {
     streets: [],
     createTemplate: function (year, streetName) {
-        return `<div class="timeline">
-                    <div class="timeline-part">
-                        <div class="timeline-graph"></div>
-                        <div class="timeline-meta">
-                            <h3 class="year">${year}</h3>
-                            <p>${streetName}</p>
-                        </div>
+        return `<div class="timeline-part">
+                    <div class="timeline-graph"></div>
+                    <div class="timeline-meta">
+                        <h3 class="year">${year}</h3>
+                        <p>${streetName}</p>
                     </div>
                 </div>`
     },
@@ -72,11 +70,12 @@ const content = {
             });
 
             let html = this.createTemplate(item.date.value, item.label.value);
-            document.querySelector(".streets").insertAdjacentHTML('beforeend', html);
+            document.querySelector(".timeline").insertAdjacentHTML('beforeend', html);
         });
 
         map.filterLines();
-        // map.addLines();
+        map.addLines();
+        map.autoZoom();
     },
     render: function () {
         this.renderStreets();
@@ -93,6 +92,16 @@ const map = {
     lines: [],
     filteredLines: [],
     geoJSONlayers: [],
+    outerBounds: {
+        northEast: {
+            lat: 0,
+            lng: 0,
+        },
+        southWest: {
+            lat: 90,
+            lng: 180,
+        }
+    },
     filterLines: function () {
         this.lines = this.lines.filter(function (item) {
             if (item.geoJSON.type !== "Point") {
@@ -107,32 +116,63 @@ const map = {
             }
         });
     },
+    setOuterBounds: function () {
+        this.geoJSONlayers.forEach((item) => {
+            let bounds = item.getBounds();
+
+            if(bounds._northEast.lat > this.outerBounds.northEast.lat) {
+                this.outerBounds.northEast.lat = bounds._northEast.lat
+            }
+
+            if(bounds._northEast.lng > this.outerBounds.northEast.lng) {
+                this.outerBounds.northEast.lng = bounds._northEast.lng
+            }
+
+            if(bounds._southWest.lat < this.outerBounds.southWest.lat) {
+                this.outerBounds.southWest.lat = bounds._southWest.lat
+            }
+
+            if(bounds._southWest.lng < this.outerBounds.southWest.lng) {
+                this.outerBounds.southWest.lng = bounds._southWest.lng
+            }
+        });
+    },
+    autoZoom: function () {
+        this.setOuterBounds();
+        this.canvas.flyToBounds([
+            [this.outerBounds.northEast.lat, this.outerBounds.northEast.lng],
+            [this.outerBounds.southWest.lat, this.outerBounds.southWest.lng]
+        ]);
+    },
     addLines: function () {
+        map.filterLinesByYear(filter.checkVisbileYear());
+        console.log(filter.checkVisbileYear(), map.filteredLines);
+
         this.clearLayers();
+        this.setLineStyle();
 
         this.filteredLines.forEach((item) => {
             let layer = L.geoJSON(item.geoJSON).addTo(this.canvas);
             this.geoJSONlayers.push(layer);
         });
-
-        this.setLineStyle();
     },
     filterLinesByYear: function (year) {
         this.filteredLines = this.lines.filter(function (item) {
-            if (item.year < year) {
+            if (item.year <= year) {
                 return item
             }
         });
     },
     setLineStyle: function () {
-        L.geoJSON(this.filteredLines, {
+        L.geoJSON(this.geoJSONlayers, {
             style: this.lineStyle
         }).addTo(this.canvas);
     },
     init: function () {
         this.canvas = L.map('map', {
-            center: [52.29, 4.91],
-            zoom: 12
+            center: [52.37959297229016, 4.901649844832719],
+            zoom: 11,
+            maxZoom: 14
         });
 
         let Stamen_TonerLite = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}', {
@@ -168,10 +208,8 @@ const filter = {
 
             // Set a timeout to run after scrolling ends
             isScrolling = setTimeout(function() {
-
-                map.filterLinesByYear(_this.checkVisbileYear());
                 map.addLines();
-
+                map.autoZoom();
             }, 66);
         });
     }
