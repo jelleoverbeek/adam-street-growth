@@ -28,7 +28,7 @@ const api = {
         }
         
         ORDER BY ?date
-        LIMIT 500`,
+        `,
     queryUrl: function () {
         return 'https://api.data.adamlink.nl/datasets/AdamNet/all/services/endpoint/sparql?default-graph-uri=&query=' + encodeURIComponent(this.sparqlQuery) + '&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on'
     },
@@ -85,6 +85,7 @@ const content = {
 
         });
 
+        listToggle.init();
         map.filterLines();
         map.addLines();
         map.autoZoom();
@@ -220,6 +221,24 @@ const filter = {
                 map.addLines();
                 map.autoZoom();
             }, 66);
+        });
+    }
+};
+
+const listToggle = {
+    toggle: function (element) {
+          element.classList.toggle("toggled");
+    },
+    init: function () {
+        const lists = document.querySelectorAll(".streets");
+        const _this = this;
+
+        console.log(lists);
+
+        lists.forEach((list) => {
+            list.addEventListener("click", function (event) {
+                _this.toggle(this);
+            })
         });
     }
 };
