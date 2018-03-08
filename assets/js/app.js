@@ -228,11 +228,13 @@ const filter = {
 const story = {
     animation: null,
     interval: null,
+    paused: true,
     play: function () {
         let timelineParts = filter.sidebar.querySelectorAll(".timeline-part");
         let scrollDistance = timelineParts[timelineParts.length-1].offsetTop;
         let scrollTime = scrollDistance*5;
         let _this = this;
+        this.paused = false;
 
         this.doScrolling(scrollDistance, scrollTime);
 
@@ -246,6 +248,8 @@ const story = {
         }, scrollTime);
     },
     pause: function () {
+        this.paused = true;
+
         window.cancelAnimationFrame(this.animation);
         clearInterval(this.interval);
     },
@@ -254,6 +258,7 @@ const story = {
         let startingY = window.pageYOffset;
         let diff = elementY - startingY;
         let start;
+        let _this = this;
 
         // Bootstrap our animation - it will get called right before next frame shall be rendered.
         this.animation = window.requestAnimationFrame(function step(timestamp) {
@@ -266,7 +271,7 @@ const story = {
             filter.sidebar.scrollTo(0, startingY + diff * percent);
 
             // Proceed with animation as long as we wanted it to.
-            if (time < duration) {
+            if (time < duration && _this.paused !== true) {
                 window.requestAnimationFrame(step);
             }
         })
