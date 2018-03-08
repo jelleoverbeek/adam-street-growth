@@ -28,9 +28,9 @@ const api = {
         }
         
         ORDER BY ?date
-        `,
+        LIMIT 9999`,
     queryUrl: function () {
-        return 'https://api.data.adamlink.nl/datasets/AdamNet/all/services/endpoint/sparql?default-graph-uri=&query=' + encodeURIComponent(this.sparqlQuery) + '&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on'
+        return 'https://api.data.adamlink.nl/datasets/AdamNet/all/services/hva2018/sparql?default-graph-uri=&query=' + encodeURIComponent(this.sparqlQuery) + '&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on'
     },
     setData: function () {
         fetch(this.queryUrl())
@@ -100,7 +100,7 @@ const map = {
     lineStyle: {
         "fillColor": "#FF4343",
         "color": "#FF4343",
-        "weight": 3,
+        "weight": 1,
     },
     lines: [],
     filteredLines: [],
@@ -158,13 +158,13 @@ const map = {
         ]);
     },
     addLines: function () {
-        map.filterLinesByYear(filter.checkVisbileYear());
+        this.filterLinesByYear(filter.checkVisbileYear());
         this.clearLayers();
-        this.setLineStyle();
         this.filteredLines.forEach((item) => {
             let layer = L.geoJSON(item.geoJSON).addTo(this.canvas);
             this.geoJSONlayers.push(layer);
         });
+        this.setLineStyle();
     },
     filterLinesByYear: function (year) {
         this.filteredLines = this.lines.filter(function (item) {
@@ -174,9 +174,9 @@ const map = {
         });
     },
     setLineStyle: function () {
-        L.geoJSON(this.geoJSONlayers, {
-            style: this.lineStyle
-        }).addTo(this.canvas);
+        this.geoJSONlayers.forEach((layer) => {
+            layer.setStyle(this.lineStyle);
+        });
     },
     init: function () {
         this.canvas = L.map('map', {
@@ -232,8 +232,6 @@ const listToggle = {
     init: function () {
         const lists = document.querySelectorAll(".streets");
         const _this = this;
-
-        console.log(lists);
 
         lists.forEach((list) => {
             list.addEventListener("click", function (event) {
