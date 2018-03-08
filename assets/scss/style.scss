@@ -1,4 +1,5 @@
-@import "variables";
+$red: #FF4343;
+
 @import "mixins";
 
 * {
@@ -14,11 +15,15 @@ body {
     font-family: 'Source Sans Pro', sans-serif;
     display: flex;
     color: #323232;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 h3 {
     font-size: rem(18);
     margin: 0;
+
+    transition: all ease-in-out 0.5s;
 }
 
 p {
@@ -70,6 +75,22 @@ main {
     background: url("../img/timeline-end.svg") 24px top no-repeat;
 }
 
+.timeline-part.active {
+    color: $red;
+
+    .timeline-graph {
+        background: url("../img/timeline-mid-active.svg") 24px top no-repeat, url("../img/timeline-line.svg") 24px top repeat-y;
+    }
+
+    &:first-child .timeline-graph {
+        background: url("../img/timeline-start-active.svg") 24px top no-repeat;
+    }
+
+    &:last-child .timeline-graph {
+        background: url("../img/timeline-end-active.svg") 24px top no-repeat;
+    }
+}
+
 .streets {
     list-style: none;
     margin: 0;
@@ -102,6 +123,26 @@ li {
     margin: 0;
     font-size: rem(15);
     color: #797979;
+}
+
+.controls {
+    position: fixed;
+    top: rem(24);
+    right: rem(24);
+    z-index: 1000;
+}
+
+button {
+    background: $red;
+    box-shadow: 0 2px 14px 0 rgba(0,0,0,0.12);
+    border-radius: 3px;
+    border: none;
+    padding: rem(4);
+    cursor: pointer;
+
+    &:hover {
+        background: darken($red, 5%);
+    }
 }
 
 .preloader {

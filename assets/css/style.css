@@ -8,11 +8,14 @@ body {
   margin: 0;
   font-family: 'Source Sans Pro', sans-serif;
   display: flex;
-  color: #323232; }
+  color: #323232;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
 
 h3 {
   font-size: 1.125rem;
-  margin: 0; }
+  margin: 0;
+  transition: all ease-in-out 0.5s; }
 
 p {
   margin: 0;
@@ -55,6 +58,15 @@ main {
 .timeline-part:last-child .timeline-graph {
   background: url("../img/timeline-end.svg") 24px top no-repeat; }
 
+.timeline-part.active {
+  color: #FF4343; }
+  .timeline-part.active .timeline-graph {
+    background: url("../img/timeline-mid-active.svg") 24px top no-repeat, url("../img/timeline-line.svg") 24px top repeat-y; }
+  .timeline-part.active:first-child .timeline-graph {
+    background: url("../img/timeline-start-active.svg") 24px top no-repeat; }
+  .timeline-part.active:last-child .timeline-graph {
+    background: url("../img/timeline-end-active.svg") 24px top no-repeat; }
+
 .streets {
   list-style: none;
   margin: 0;
@@ -80,6 +92,22 @@ li {
   margin: 0;
   font-size: 0.9375rem;
   color: #797979; }
+
+.controls {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 1000; }
+
+button {
+  background: #FF4343;
+  box-shadow: 0 2px 14px 0 rgba(0, 0, 0, 0.12);
+  border-radius: 3px;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer; }
+  button:hover {
+    background: #ff2a2a; }
 
 .preloader {
   position: fixed;

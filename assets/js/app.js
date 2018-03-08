@@ -63,9 +63,7 @@ const content = {
                 </div>`
     },
     renderStreets: function () {
-
         let latestYear = 0;
-
         this.streets.forEach((item) => {
 
             map.lines.push({
@@ -82,7 +80,6 @@ const content = {
             } else {
                 document.querySelector(".year-" + latestYear + " .streets").insertAdjacentHTML('beforeend', `<li>${item.label.value}</li>`);
             }
-
         });
 
         listToggle.init();
@@ -187,7 +184,7 @@ const map = {
 
         let Stamen_TonerLite = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}', {
             attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-            minZoom: 0,
+            minZoom: 12,
             maxZoom: 20,
             ext: 'png'
         }).addTo(this.canvas);
@@ -203,6 +200,9 @@ const filter = {
         this.sidebar.querySelectorAll(".timeline-part").forEach((element) => {
             if(element.offsetTop <= this.sidebar.scrollTop + window.innerHeight) {
                 visibleParts.push(element);
+                element.classList.add('active');
+            } else {
+                element.classList.remove('active');
             }
         });
 
@@ -221,6 +221,70 @@ const filter = {
                 map.addLines();
                 map.autoZoom();
             }, 66);
+        });
+    }
+};
+
+const story = {
+    animation: null,
+    interval: null,
+    play: function () {
+        let timelineParts = filter.sidebar.querySelectorAll(".timeline-part");
+        let scrollDistance = timelineParts[timelineParts.length-1].offsetTop;
+        let scrollTime = scrollDistance*5;
+        let _this = this;
+
+        this.doScrolling(scrollDistance, scrollTime);
+
+        this.interval = setInterval(function () {
+            map.addLines();
+            map.autoZoom();
+        }, scrollTime/10);
+        
+        setTimeout(function () {
+            clearInterval(_this.interval);
+        }, scrollTime);
+    },
+    pause: function () {
+        window.cancelAnimationFrame(this.animation);
+        clearInterval(this.interval);
+    },
+    // https://stackoverflow.com/questions/17722497/scroll-smoothly-to-specific-element-on-page
+    doScrolling: function (elementY, duration) {
+        let startingY = window.pageYOffset;
+        let diff = elementY - startingY;
+        let start;
+
+        // Bootstrap our animation - it will get called right before next frame shall be rendered.
+        this.animation = window.requestAnimationFrame(function step(timestamp) {
+            if (!start) start = timestamp;
+            // Elapsed milliseconds since start of scrolling.
+            let time = timestamp - start;
+            // Get percent of completion in range [0, 1].
+            let percent = Math.min(time / duration, 1);
+
+            filter.sidebar.scrollTo(0, startingY + diff * percent);
+
+            // Proceed with animation as long as we wanted it to.
+            if (time < duration) {
+                window.requestAnimationFrame(step);
+            }
+        })
+    },
+    init: function () {
+        const playBtn = document.querySelector("#play");
+        const pauseBtn = document.querySelector("#pause");
+
+        playBtn.addEventListener("click", (ev) => {
+            this.play();
+            playBtn.classList.add("hidden");
+            pauseBtn.classList.remove("hidden");
+        });
+
+        pauseBtn.addEventListener("click", (ev) => {
+            this.pause();
+            pauseBtn.classList.add("hidden");
+            playBtn.classList.remove("hidden");
         });
     }
 };
@@ -246,6 +310,7 @@ const app = {
         api.setData();
         map.init();
         filter.init();
+        story.init();
     }
 };
 
