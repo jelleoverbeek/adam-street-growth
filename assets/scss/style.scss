@@ -5,6 +5,10 @@
     box-sizing: border-box;
 }
 
+html, body {
+    height: 100%;
+}
+
 body {
     margin: 0;
     font-family: 'Source Sans Pro', sans-serif;
@@ -46,20 +50,36 @@ main {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    width: 100%;
+    flex: 1;
+    padding-top: rem(24)
 }
 
 .timeline-graph {
-    width: rem(80);
-    height: rem(80);
-    background: url("../img/timeline-mid.svg") no-repeat 50% 50%;
+    max-width: rem(80);
+    min-height: rem(80);
+    flex: 1;
+    background: url("../img/timeline-mid.svg") 24px top no-repeat, url("../img/timeline-line.svg") 24px top repeat-y;
 }
 
 .timeline-part:first-child .timeline-graph {
-    background-image: url("../img/timeline-start.svg");
+    background: url("../img/timeline-start.svg") 24px top no-repeat;
 }
 
 .timeline-part:last-child .timeline-graph {
-    background-image: url("../img/timeline-end.svg");
+    background: url("../img/timeline-end.svg") 24px top no-repeat;
+}
+
+.streets {
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+}
+
+li {
+    margin: 0;
+    font-size: rem(15);
+    color: #797979;
 }
 
 .preloader {

@@ -52,15 +52,19 @@ const api = {
 const content = {
     streets: [],
     createTemplate: function (year, streetName) {
-        return `<div class="timeline-part">
+        return `<div class="timeline-part year-${year}">
                     <div class="timeline-graph"></div>
                     <div class="timeline-meta">
                         <h3 class="year">${year}</h3>
-                        <p>${streetName}</p>
+                        <ul class="streets">
+                            <li>${streetName}</li>
+                        </ul>
                     </div>
                 </div>`
     },
     renderStreets: function () {
+
+        let latestYear = 0;
 
         this.streets.forEach((item) => {
 
@@ -69,8 +73,16 @@ const content = {
                 year: item.date.value
             });
 
-            let html = this.createTemplate(item.date.value, item.label.value);
-            document.querySelector(".timeline").insertAdjacentHTML('beforeend', html);
+            if(item.date.value > latestYear) {
+                latestYear = item.date.value;
+
+                let html = this.createTemplate(item.date.value, item.label.value);
+                document.querySelector(".timeline").insertAdjacentHTML('beforeend', html);
+
+            } else {
+                document.querySelector(".year-" + latestYear + " .streets").insertAdjacentHTML('beforeend', `<li>${item.label.value}</li>`);
+            }
+
         });
 
         map.filterLines();
