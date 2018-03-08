@@ -40,7 +40,7 @@ main {
 .timeline-graph {
   width: 5rem;
   height: 5rem;
-  background: url("../img/timeline-mid.svg") no-repeat; }
+  background: url("../img/timeline-mid.svg") no-repeat 50% 50%; }
 
 .timeline-part:first-child .timeline-graph {
   background-image: url("../img/timeline-start.svg"); }

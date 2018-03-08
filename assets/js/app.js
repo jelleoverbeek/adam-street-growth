@@ -139,18 +139,15 @@ const map = {
     },
     autoZoom: function () {
         this.setOuterBounds();
-        this.canvas.flyToBounds([
+        this.canvas.fitBounds([
             [this.outerBounds.northEast.lat, this.outerBounds.northEast.lng],
             [this.outerBounds.southWest.lat, this.outerBounds.southWest.lng]
         ]);
     },
     addLines: function () {
         map.filterLinesByYear(filter.checkVisbileYear());
-        console.log(filter.checkVisbileYear(), map.filteredLines);
-
         this.clearLayers();
         this.setLineStyle();
-
         this.filteredLines.forEach((item) => {
             let layer = L.geoJSON(item.geoJSON).addTo(this.canvas);
             this.geoJSONlayers.push(layer);

@@ -51,7 +51,7 @@ main {
 .timeline-graph {
     width: rem(80);
     height: rem(80);
-    background: url("../img/timeline-mid.svg") no-repeat;
+    background: url("../img/timeline-mid.svg") no-repeat 50% 50%;
 }
 
 .timeline-part:first-child .timeline-graph {
