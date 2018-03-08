@@ -84,7 +84,7 @@ const content = {
 };
 
 const map = {
-    canvas: "",
+    canvas: null,
     lineStyle: {
         "fillColor": "#FF4343",
         "color": "#FF4343",
@@ -92,7 +92,7 @@ const map = {
     },
     lines: [],
     filteredLines: [],
-    geoJSONlayer: null,
+    geoJSONlayers: [],
     filterLines: function () {
         this.lines = this.lines.filter(function (item) {
             if (item.geoJSON.type !== "Point") {
@@ -100,10 +100,19 @@ const map = {
             }
         });
     },
+    clearLayers: function () {
+        this.geoJSONlayers.forEach((item) => {
+            if(this.canvas.hasLayer(item)) {
+                this.canvas.removeLayer(item);
+            }
+        });
+    },
     addLines: function () {
+        this.clearLayers();
 
         this.filteredLines.forEach((item) => {
-            this.geoJSONlayer = L.geoJSON(item.geoJSON).addTo(this.canvas);
+            let layer = L.geoJSON(item.geoJSON).addTo(this.canvas);
+            this.geoJSONlayers.push(layer);
         });
 
         this.setLineStyle();
@@ -114,8 +123,6 @@ const map = {
                 return item
             }
         });
-
-        console.log(this.filteredLines)
     },
     setLineStyle: function () {
         L.geoJSON(this.filteredLines, {
