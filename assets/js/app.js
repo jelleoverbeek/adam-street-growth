@@ -229,7 +229,14 @@ const story = {
     animation: null,
     interval: null,
     paused: true,
+    reset: function () {
+        filter.sidebar.scrollTo(0, 0);
+        map.addLines();
+        map.autoZoom();
+    },
     play: function () {
+        this.reset();
+
         let timelineParts = filter.sidebar.querySelectorAll(".timeline-part");
         let scrollDistance = timelineParts[timelineParts.length-1].offsetTop;
         let scrollTime = scrollDistance*5;
