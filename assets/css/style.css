@@ -23,17 +23,20 @@ p {
   color: #797979; }
 
 aside {
+  position: relative;
   width: 20vw;
   min-width: 20rem;
   height: 100vh;
   background-color: #fff;
-  padding: 1.5rem;
   overflow: auto; }
 
 main {
   width: 100%;
   height: 100vh;
   background-color: antiquewhite; }
+
+.timeline {
+  padding: 1.5rem; }
 
 .timeline-part {
   display: flex; }
@@ -100,14 +103,38 @@ li {
   z-index: 1000; }
 
 button {
+  display: flex;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 600;
+  align-items: center;
+  justify-content: center;
   background: #FF4343;
   box-shadow: 0 2px 14px 0 rgba(0, 0, 0, 0.12);
   border-radius: 3px;
   border: none;
-  padding: 0.25rem;
+  font-size: 1rem;
+  color: #fff;
+  padding: 0.5rem;
   cursor: pointer; }
   button:hover {
     background: #ff2a2a; }
+
+.scroll-indicator {
+  display: flex;
+  color: #FF4343;
+  bottom: 0;
+  position: absolute;
+  padding: 2rem;
+  font-weight: 600;
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, white 100%);
+  transition: all ease-in-out 1s;
+  z-index: 10; }
+  .scroll-indicator img {
+    margin-right: 1rem; }
+
+.slide-out {
+  bottom: -6.25rem;
+  opacity: 0; }
 
 .preloader {
   position: fixed;

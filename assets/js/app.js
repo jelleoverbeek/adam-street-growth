@@ -179,7 +179,6 @@ const map = {
         this.canvas = L.map('map', {
             center: [52.37959297229016, 4.901649844832719],
             zoom: 11,
-            maxZoom: 14
         });
 
         let Stamen_TonerLite = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}', {
@@ -213,6 +212,9 @@ const filter = {
         let isScrolling = false;
 
         this.sidebar.addEventListener('scroll', function(event) {
+
+            document.querySelector(".scroll-indicator").classList.add("slide-out");
+
             // Clear our timeout throughout the scroll
             window.clearTimeout( isScrolling );
 

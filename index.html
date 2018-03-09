@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Amsterdam growth</title>
+    <title>Amsterdam street growth</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
 
@@ -12,8 +13,16 @@
 </head>
 <body>
 
-<aside class="timeline"></aside>
+<aside>
+    <div class="scroll-indicator">
+        <img src="assets/img/scroll.svg" alt="Scroll naar beneden voor meer straten">
+        Scroll naar beneden om meer straten te laden
+    </div>
+    <div class="timeline"></div>
+</aside>
+
 <main id="map"></main>
+
 <div class="controls">
     <button id="play"><img src="assets/img/play.svg" alt="Play button"></button>
     <button id="pause" class="hidden"><img src="assets/img/pause.svg" alt="pause button"></button>
