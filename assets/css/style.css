@@ -104,17 +104,17 @@ li {
 
 button {
   display: flex;
-  font-family: 'Source Sans Pro', sans-serif;
   font-weight: 600;
   align-items: center;
   justify-content: center;
   background: #FF4343;
-  box-shadow: 0 2px 14px 0 rgba(0, 0, 0, 0.12);
   border-radius: 3px;
   border: none;
   font-size: 1rem;
   color: #fff;
+  box-shadow: 0 2px 14px 0 rgba(0, 0, 0, 0.12);
   padding: 0.5rem;
+  width: 100%;
   cursor: pointer; }
   button:hover {
     background: #ff2a2a; }
@@ -127,8 +127,7 @@ button {
   padding: 2rem;
   font-weight: 600;
   background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, white 100%);
-  transition: all ease-in-out 1s;
-  z-index: 10; }
+  transition: all ease-in-out 1s; }
   .scroll-indicator img {
     margin-right: 1rem; }
 
